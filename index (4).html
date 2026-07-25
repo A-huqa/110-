@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>110 Apparel — Rock the Clock</title>
+<meta name="description" content="110 Apparel. Kenyan streetwear, made in Nairobi. Drop 001 unlocks 10 January 2026 at 1:10 PM. Join the waitlist for early access.">
+<meta name="theme-color" content="#050D17">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="110 Apparel — Rock the Clock">
+<meta property="og:description" content="Drop 001 unlocks 10 January 2026, 1:10 PM. Nairobi streetwear, built on time.">
+<meta property="og:image" content="/og-image.jpg">
+<meta property="og:locale" content="en_KE">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="canonical" href="https://110apparel.co.ke/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,700;6..96,900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Brand",
+  "name": "110 Apparel",
+  "slogan": "Rock the Clock",
+  "description": "Kenyan streetwear brand based in Nairobi. Quarterly limited drops.",
+  "address": { "@type": "PostalAddress", "addressLocality": "Nairobi", "addressCountry": "KE" }
+}
+</script>
+
+<style>
+/* ============================================================
+   110 APPAREL — DESIGN TOKENS
+   ============================================================ */
+:root{
+  /* ============================================================
+     110 APPAREL BRAND PALETTE
+     Three brand colours sampled from the logo, plus a family of
+     darker tones derived from the navy hue (215deg) so every
+     surface on the site belongs to the same colour family.
+     ============================================================ */
+  --navy:#003682;      /* brand navy   — structural, buttons, fills   */
+  --azure:#5DB5DD;     /* brand azure  — drop timing, live states     */
+  --ice:#D1E8F4;       /* brand ice    — founding-member status only  */
+
+  /* derived surfaces, all on the navy hue */
+  --ink:#050D17;           /* page background        */
+  --charcoal:#0B1626;      /* raised sections        */
+  --charcoal-lift:#132237; /* cards, media wells     */
+  --line:#24354C;          /* borders and rules      */
+
+  --navy-lift:#0A4EA8;     /* navy hover state       */
+  --azure-dim:#3D8DB4;     /* azure, de-emphasised   */
+
+  --paper:#F4F9FC;         /* text, cooled to match  */
+  --stone:#8FA3BC;         /* secondary text         */
+  --stone-dim:#5B6E88;     /* tertiary text          */
+
+  --display:'Bodoni Moda', Georgia, serif;
+  --body:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono:'JetBrains Mono', 'SF Mono', monospace;
+
+  --gut:clamp(20px, 5vw, 64px);
+  --maxw:1560px;
+
+  --ease:cubic-bezier(.16,1,.3,1);
+  --ease-io:cubic-bezier(.65,0,.35,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--ink);
+  color:var(--paper);
+  font-family:var(--body);
+  font-weight:400;
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body.is-locked{overflow:hidden}
+img{max-width:100%;display:block}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+input{font:inherit}
+::selection{background:var(--azure);color:#fff}
+
+:focus-visible{outline:2px solid var(--azure);outline-offset:3px;border-radius:2px}
+
+/* Utility ------------------------------------------------- */
+.wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gut)}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.stamp{
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:400;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--stone);
+}
+
+.rule{height:1px;background:rgba(244,249,252,.1);border:0}
+
+/* Display type -------------------------------------------- */
+.display{
+  font-family:var(--display);
+  font-weight:400;
+  line-height:.9;
+  letter-spacing:-.02em;
+}
+
+/* Reveal on scroll ---------------------------------------- */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv-d1{transition-delay:.08s}.rv-d2{transition-delay:.16s}
+.rv-d3{transition-delay:.24s}.rv-d4{transition-delay:.32s}
+
+/* ============================================================
+   PRELOADER — the clock logo draws itself
+   ============================================================ */
+#preload{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--ink);
+  display:grid;place-items:center;
+  transition:opacity .8s var(--ease),visibility .8s;
+}
+#preload.done{opacity:0;visibility:hidden}
+.pl-clock{width:76px;height:76px}
+.pl-clock circle{
+  fill:none;stroke:var(--paper);stroke-width:1.5;
+  stroke-dasharray:220;stroke-dashoffset:220;
+  animation:draw 1.15s var(--ease-io) forwards;
+}
+.pl-clock line{
+  stroke:var(--paper);stroke-width:2;stroke-linecap:round;
+  opacity:0;animation:fadeHand .5s ease forwards .85s;
+}
+.pl-num{
+  margin-top:22px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.34em;color:var(--stone-dim);
+  opacity:0;animation:fadeHand .6s ease forwards 1.1s;
+}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadeHand{to{opacity:1}}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  padding:20px 0;
+  transition:background .5s var(--ease),padding .5s var(--ease),border-color .5s;
+  border-bottom:1px solid transparent;
+}
+.nav.stuck{
+  background:rgba(10,10,10,.82);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  padding:13px 0;
+  border-bottom-color:rgba(244,249,252,.09);
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:24px}
+
+.brand{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.brand svg{width:27px;height:27px;flex-shrink:0}
+.brand-txt{
+  font-family:var(--display);font-size:20px;font-weight:700;
+  letter-spacing:.06em;line-height:1;
+}
+
+.nav-links{display:flex;gap:34px;align-items:center}
+.nav-links a{
+  font-size:12px;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--paper);
+  position:relative;padding:5px 0;opacity:.82;
+  transition:opacity .3s;
+}
+.nav-links a::after{
+  content:'';position:absolute;left:0;bottom:0;
+  width:100%;height:1px;background:currentColor;
+  transform:scaleX(0);transform-origin:right;
+  transition:transform .45s var(--ease);
+}
+.nav-links a:hover{opacity:1}
+.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+
+.nav-cta{
+  border:1px solid rgba(244,249,252,.28);
+  padding:10px 22px;border-radius:100px;
+  font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  transition:background .35s var(--ease),color .35s var(--ease),border-color .35s;
+  white-space:nowrap;
+}
+.nav-cta:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+
+.burger{display:none;width:26px;height:16px;position:relative;flex-shrink:0}
+.burger span{
+  position:absolute;left:0;width:100%;height:1.5px;background:var(--paper);
+  transition:transform .45s var(--ease),opacity .3s;
+}
+.burger span:nth-child(1){top:0}
+.burger span:nth-child(2){top:7px}
+.burger span:nth-child(3){top:14px}
+body.menu-open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+body.menu-open .burger span:nth-child(2){opacity:0}
+body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* Mobile drawer */
+.drawer{
+  position:fixed;inset:0;z-index:890;
+  background:var(--ink);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:0 var(--gut);
+  clip-path:inset(0 0 100% 0);
+  transition:clip-path .75s var(--ease);
+  visibility:hidden;
+}
+body.menu-open .drawer{clip-path:inset(0 0 0 0);visibility:visible}
+.drawer a{
+  font-family:var(--display);font-size:clamp(38px,11vw,68px);
+  line-height:1.12;padding:9px 0;
+  opacity:0;transform:translateY(24px);
+  transition:opacity .6s var(--ease),transform .6s var(--ease);
+}
+body.menu-open .drawer a{opacity:1;transform:none}
+body.menu-open .drawer a:nth-child(1){transition-delay:.2s}
+body.menu-open .drawer a:nth-child(2){transition-delay:.27s}
+body.menu-open .drawer a:nth-child(3){transition-delay:.34s}
+body.menu-open .drawer a:nth-child(4){transition-delay:.41s}
+body.menu-open .drawer a:nth-child(5){transition-delay:.48s}
+.drawer-foot{
+  position:absolute;bottom:44px;left:var(--gut);right:var(--gut);
+  display:flex;justify-content:space-between;
+}
+
+@media(max-width:900px){
+  .nav-links{display:none}
+  .burger{display:block}
+  .nav-cta{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ PRELOADER ============ -->
+<div id="preload" role="status" aria-label="Loading">
+  <div style="text-align:center">
+    <svg class="pl-clock" viewBox="0 0 80 80" aria-hidden="true">
+      <circle cx="40" cy="40" r="35"/>
+      <line x1="40" y1="40" x2="40" y2="20"/>
+      <line x1="40" y1="40" x2="55" y2="46"/>
+    </svg>
+    <div class="pl-num">1:10</div>
+  </div>
+</div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a href="#top" class="brand" aria-label="110 Apparel, home">
+      <svg viewBox="0 0 80 80" aria-hidden="true">
+        <circle cx="40" cy="40" r="35" fill="none" stroke="currentColor" stroke-width="4"/>
+        <line x1="40" y1="40" x2="40" y2="19" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        <line x1="40" y1="40" x2="57" y2="47" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+      </svg>
+      <span class="brand-txt">110</span>
+    </a>
+
+    <div class="nav-links">
+      <a href="#drop">Drop 001</a>
+      <a href="#story">Story</a>
+      <a href="#culture">Culture</a>
+      <a href="#lookbook">Lookbook</a>
+    </div>
+
+    <a href="#waitlist" class="nav-cta">Join the waitlist</a>
+
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="drawer" id="drawer">
+  <a href="#drop">Drop 001</a>
+  <a href="#story">Story</a>
+  <a href="#culture">Culture</a>
+  <a href="#lookbook">Lookbook</a>
+  <a href="#waitlist">Waitlist</a>
+  <div class="drawer-foot">
+    <span class="stamp">Nairobi, KE</span>
+    <span class="stamp">Est. 2026</span>
+  </div>
+</div>
+<style>
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  position:relative;min-height:100svh;
+  display:flex;align-items:center;
+  padding:120px 0 70px;
+  overflow:hidden;
+}
+/* ambient grain + vignette */
+.hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 90% 70% at 50% 45%,transparent 25%,rgba(10,10,10,.85) 100%);
+  z-index:2;
+}
+.grain{
+  position:absolute;inset:-150%;pointer-events:none;z-index:3;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grainShift 8s steps(6) infinite;
+}
+@keyframes grainShift{
+  0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}
+  40%{transform:translate(3%,-4%)}60%{transform:translate(-3%,-3%)}
+  80%{transform:translate(4%,2%)}100%{transform:translate(0,0)}
+}
+
+.hero-grid{
+  position:relative;z-index:5;
+  display:grid;grid-template-columns:1.15fr .85fr;
+  gap:clamp(36px,6vw,90px);align-items:center;width:100%;
+}
+
+.hero-eyebrow{
+  display:flex;align-items:center;gap:13px;margin-bottom:30px;
+  opacity:0;animation:heroIn .9s var(--ease) forwards 1.35s;
+}
+.dot{
+  width:6px;height:6px;border-radius:50%;background:var(--azure);
+  animation:pulse 2.4s ease-in-out infinite;flex-shrink:0;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.75)}}
+
+.hero h1{
+  font-family:var(--display);
+  font-size:clamp(56px,11.5vw,168px);
+  font-weight:400;line-height:.86;letter-spacing:-.035em;
+  margin-bottom:26px;
+}
+.hero h1 .ln{display:block;overflow:hidden}
+.hero h1 .ln i{
+  display:block;font-style:normal;
+  transform:translateY(105%);
+  animation:lineUp 1.15s var(--ease) forwards;
+}
+.hero h1 .ln:nth-child(1) i{animation-delay:.95s}
+.hero h1 .ln:nth-child(2) i{animation-delay:1.06s}
+@keyframes lineUp{to{transform:translateY(0)}}
+
+.hero h1 em{
+  font-style:italic;font-weight:400;
+  color:var(--ice);
+}
+
+.hero-sub{
+  font-size:clamp(15px,1.7vw,19px);
+  color:var(--stone);max-width:44ch;line-height:1.65;
+  margin-bottom:38px;font-weight:300;
+  opacity:0;animation:heroIn .9s var(--ease) forwards 1.5s;
+}
+@keyframes heroIn{to{opacity:1}}
+
+.hero-cta{
+  display:flex;gap:13px;flex-wrap:wrap;
+  opacity:0;animation:heroIn .9s var(--ease) forwards 1.62s;
+}
+
+/* Buttons -------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 34px;border-radius:100px;
+  font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  position:relative;overflow:hidden;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+  border:1px solid transparent;
+}
+.btn:active{transform:scale(.975)}
+/* Primary action: paper at rest, brand navy sliding up on hover. */
+.btn-fill{background:var(--paper);color:var(--ink)}
+.btn-fill::before{
+  content:'';position:absolute;inset:0;background:var(--navy);
+  transform:translateY(101%);transition:transform .45s var(--ease);z-index:0;
+}
+.btn-fill:hover::before{transform:translateY(0)}
+.btn-fill:hover{color:#fff;box-shadow:0 12px 34px -10px rgba(0,54,130,.7)}
+.btn-fill span{position:relative;z-index:1}
+
+.btn-ghost{border-color:rgba(244,249,252,.26);color:var(--paper)}
+.btn-ghost:hover{border-color:var(--paper);background:rgba(244,249,252,.06)}
+
+/* ============================================================
+   LIVE CLOCK — the signature hero element
+   ============================================================ */
+.clock-stage{
+  display:flex;flex-direction:column;align-items:center;gap:26px;
+  opacity:0;animation:heroIn 1.2s var(--ease) forwards 1.2s;
+}
+.clock-face{
+  width:min(400px,72vw);aspect-ratio:1;position:relative;
+}
+.clock-face svg{width:100%;height:100%;overflow:visible}
+
+.cf-ring{fill:none;stroke:rgba(244,249,252,.14);stroke-width:.6}
+.cf-tick{stroke:rgba(244,249,252,.3);stroke-width:.7}
+.cf-tick-major{stroke:rgba(244,249,252,.55);stroke-width:1.3}
+/* the 1 and 2 o'clock ticks bracket 1:10 — highlight them */
+.cf-tick-hot{stroke:var(--azure);stroke-width:2.4}
+
+/* Rotation uses CSS transforms anchored to the SVG's own user-space centre.
+   transform-box:view-box makes transform-origin resolve against the viewBox
+   (200x200) rather than screen pixels, so the pivot stays at the centre pin
+   at every rendered size. */
+.cf-hand,.cf-sec{
+  transform-box:view-box;
+  transform-origin:100px 100px;
+}
+.cf-hand{stroke:var(--paper);stroke-linecap:round}
+.cf-hour{stroke-width:3.4}
+.cf-min{stroke-width:2.4}
+.cf-sec{stroke:var(--azure);stroke-width:1.8}
+.cf-pin{fill:var(--paper)}
+
+/* ============================================================
+   THE 1:10 LOOP — 30s cycle
+   The second hand sweeps continuously. At the top of each 30s
+   cycle the hour and minute hands make exactly one full turn
+   and land back on 1:10, where they rest for the remainder.
+   Resting angles: hour 35deg, minute 60deg.
+   ============================================================ */
+.cf-sec{
+  animation:secSweep 30s linear infinite;
+}
+.cf-hour{
+  animation:hourLoop 30s cubic-bezier(.72,0,.24,1) infinite;
+}
+.cf-min{
+  animation:minLoop 30s cubic-bezier(.72,0,.24,1) infinite;
+}
+
+/* second hand: two full revolutions per 30s cycle, one per 15s */
+@keyframes secSweep{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(720deg)}
+}
+/* hour: rests at 35deg, then one full turn between 60% and 95% of the cycle */
+@keyframes hourLoop{
+  0%,60%   {transform:rotate(35deg)}
+  95%,100% {transform:rotate(395deg)}   /* 35 + 360 */
+}
+/* minute: rests at 60deg, same window, one full turn */
+@keyframes minLoop{
+  0%,60%   {transform:rotate(60deg)}
+  95%,100% {transform:rotate(420deg)}   /* 60 + 360 */
+}
+
+/* Pause the loop when it's scrolled out of view — saves battery on mobile */
+.clock-face.paused .cf-sec,
+.clock-face.paused .cf-hour,
+.clock-face.paused .cf-min{animation-play-state:paused}
+
+@media(prefers-reduced-motion:reduce){
+  /* hold the mark at 1:10, no motion at all */
+  .cf-sec,.cf-hour,.cf-min{animation:none}
+  .cf-hour{transform:rotate(35deg)}
+  .cf-min{transform:rotate(60deg)}
+  .cf-sec{transform:rotate(0deg)}
+}
+
+.cf-label{
+  font-family:var(--mono);font-size:6.5px;letter-spacing:.16em;
+  fill:var(--stone-dim);text-anchor:middle;
+}
+
+/* Countdown ------------------------------------------------ */
+.cd{display:flex;gap:clamp(14px,3.5vw,30px);align-items:flex-start}
+.cd-unit{text-align:center;min-width:52px}
+.cd-num{
+  font-family:var(--mono);font-weight:300;
+  font-size:clamp(26px,4.4vw,40px);
+  line-height:1;font-variant-numeric:tabular-nums;
+  display:block;color:var(--azure);
+}
+.cd-lab{
+  font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--stone-dim);margin-top:9px;display:block;
+}
+.cd-sep{
+  font-family:var(--mono);font-size:clamp(20px,3.4vw,30px);
+  color:var(--stone-dim);line-height:1;opacity:.4;
+}
+
+.hero-scroll{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  z-index:6;display:flex;flex-direction:column;align-items:center;gap:11px;
+  opacity:0;animation:heroIn 1s ease forwards 2.1s;
+}
+.scroll-line{
+  width:1px;height:44px;background:linear-gradient(var(--stone),transparent);
+  position:relative;overflow:hidden;
+}
+.scroll-line::after{
+  content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;
+  background:var(--paper);animation:scrollDot 2.1s var(--ease-io) infinite;
+}
+@keyframes scrollDot{to{top:100%}}
+
+@media(max-width:960px){
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .clock-stage{order:-1}
+  .clock-face{width:min(290px,64vw)}
+  .hero{padding-top:108px;min-height:auto}
+  .hero-scroll{display:none}
+}
+
+/* ============================================================
+   MARQUEE
+   ============================================================ */
+.marquee{
+  border-block:1px solid rgba(244,249,252,.1);
+  padding:19px 0;overflow:hidden;white-space:nowrap;
+  background:var(--charcoal);
+}
+.mq-track{display:inline-flex;gap:52px;animation:mq 34s linear infinite;will-change:transform}
+.marquee:hover .mq-track{animation-play-state:paused}
+.mq-track span{
+  font-family:var(--mono);font-size:12px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--stone);
+  display:inline-flex;align-items:center;gap:52px;
+}
+.mq-track span::after{content:'◷';color:var(--azure);font-size:14px}
+@keyframes mq{to{transform:translateX(-50%)}}
+</style>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <div class="grain" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+
+    <div class="hero-copy">
+      <div class="hero-eyebrow">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="stamp">Drop 001 · Unlocks 10.01.2026 · 1:10 PM EAT</span>
+      </div>
+
+      <h1 class="display">
+        <span class="ln"><i>Rock the</i></span>
+        <span class="ln"><i><em>Clock.</em></i></span>
+      </h1>
+
+      <p class="hero-sub">
+        Everybody gets the same twenty-four hours. Ten past one is the minute
+        you stop waiting. Built in Nairobi, cut for the people already moving.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#waitlist" class="btn btn-fill"><span>Join the waitlist</span></a>
+        <a href="#drop" class="btn btn-ghost">See the drop</a>
+      </div>
+    </div>
+
+    <div class="clock-stage">
+      <div class="clock-face">
+        <svg viewBox="0 0 200 200" role="img" aria-labelledby="clockTitle">
+          <title id="clockTitle">Live clock counting toward the Drop 001 release at 1:10</title>
+          <circle class="cf-ring" cx="100" cy="100" r="88"/>
+          <circle class="cf-ring" cx="100" cy="100" r="79" style="stroke-opacity:.5"/>
+          <g id="ticks"></g>
+          <!-- frozen target hands at exactly 1:10
+               hour = (1 + 10/60) * 30 = 35deg | minute = 10 * 6 = 60deg -->
+          <text class="cf-label" x="100" y="132">ROCK THE CLOCK</text>
+
+          <!-- Hands rest at 1:10. Every 30s the second hand completes a sweep,
+               then hour and minute make one full rotation and land back on 1:10.
+               hour 1:10 = (1 + 10/60) * 30 = 35deg | minute = 10 * 6 = 60deg -->
+          <line class="cf-hand cf-hour" id="hHour" x1="100" y1="100" x2="100" y2="60"/>
+          <line class="cf-hand cf-min"  id="hMin"  x1="100" y1="100" x2="100" y2="42"/>
+          <line class="cf-sec"          id="hSec"  x1="100" y1="112" x2="100" y2="34"/>
+          <circle class="cf-pin" cx="100" cy="100" r="3.4"/>
+          <circle cx="100" cy="100" r="1.4" fill="var(--ink)"/>
+        </svg>
+      </div>
+
+      <div class="cd" id="countdown" role="timer" aria-live="off" aria-label="Time until Drop 001 unlocks">
+        <div class="cd-unit"><span class="cd-num" id="cdD">--</span><span class="cd-lab">Days</span></div>
+        <span class="cd-sep">:</span>
+        <div class="cd-unit"><span class="cd-num" id="cdH">--</span><span class="cd-lab">Hrs</span></div>
+        <span class="cd-sep">:</span>
+        <div class="cd-unit"><span class="cd-num" id="cdM">--</span><span class="cd-lab">Min</span></div>
+        <span class="cd-sep">:</span>
+        <div class="cd-unit"><span class="cd-num" id="cdS">--</span><span class="cd-lab">Sec</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll" aria-hidden="true">
+    <div class="scroll-line"></div>
+    <span class="stamp" style="font-size:9px">Scroll</span>
+  </div>
+</header>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="mq-track" id="mqTrack">
+    <span>Rock the Clock</span><span>Made in Nairobi</span><span>Drop 001</span>
+    <span>200 Pieces Only</span><span>Ten Past One</span><span>Kenyan Made</span>
+    <span>Rock the Clock</span><span>Made in Nairobi</span><span>Drop 001</span>
+    <span>200 Pieces Only</span><span>Ten Past One</span><span>Kenyan Made</span>
+  </div>
+</div>
+<style>
+/* ============================================================
+   SECTION FRAME
+   ============================================================ */
+.sec{padding:clamp(80px,11vw,150px) 0;position:relative}
+.sec-head{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  gap:28px;margin-bottom:clamp(38px,5.5vw,66px);flex-wrap:wrap;
+}
+.sec-h2{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(38px,6.4vw,86px);
+  line-height:.92;letter-spacing:-.025em;
+}
+.sec-h2 em{font-style:italic;color:var(--ice)}
+.sec-note{max-width:36ch;color:var(--stone);font-size:15px;font-weight:300;line-height:1.7}
+
+/* timestamp marker — encodes progression toward 1:10 */
+.tstamp{
+  display:flex;align-items:baseline;gap:11px;margin-bottom:20px;
+}
+.tstamp b{
+  font-family:var(--mono);font-size:12px;font-weight:500;
+  letter-spacing:.16em;color:var(--azure);
+}
+.tstamp i{
+  font-style:normal;flex:1;height:1px;
+  background:rgba(244,249,252,.13);min-width:34px;max-width:110px;
+}
+
+/* ============================================================
+   DROP GRID + LOCKED CARDS
+   ============================================================ */
+.drop-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));
+  gap:clamp(16px,2.4vw,30px);
+}
+
+.card{
+  position:relative;
+  background:var(--charcoal);
+  border:1px solid rgba(244,249,252,.08);
+  border-radius:3px;overflow:hidden;
+  transition:border-color .5s var(--ease),transform .5s var(--ease);
+}
+.card:hover{border-color:rgba(244,249,252,.2);transform:translateY(-4px)}
+
+.card-media{
+  position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--charcoal-lift);
+}
+.card-media img{
+  width:100%;height:100%;object-fit:cover;
+  transition:filter 1.6s var(--ease),transform 1.6s var(--ease),opacity .8s;
+}
+/* LOCKED state — the signature mechanic */
+.card.locked .card-media img{
+  filter:blur(26px) saturate(.45) brightness(.72);
+  transform:scale(1.14);
+}
+.card.unlocked .card-media img{filter:none;transform:scale(1)}
+.card.unlocked:hover .card-media img{transform:scale(1.05)}
+
+.lock-veil{
+  position:absolute;inset:0;z-index:2;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;text-align:center;padding:24px;
+  background:linear-gradient(180deg,rgba(10,10,10,.32),rgba(10,10,10,.68));
+  transition:opacity .9s var(--ease),visibility .9s;
+}
+.card.unlocked .lock-veil{opacity:0;visibility:hidden;pointer-events:none}
+
+.lock-ico{
+  width:38px;height:38px;border:1px solid rgba(244,249,252,.4);
+  border-radius:50%;display:grid;place-items:center;
+}
+.lock-ico svg{width:17px;height:17px;stroke:var(--paper);fill:none;stroke-width:1.6}
+.lock-t{
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--paper);
+}
+.lock-cd{
+  font-family:var(--mono);font-size:13px;letter-spacing:.1em;
+  color:var(--azure);font-variant-numeric:tabular-nums;
+}
+
+/* corner ribbon */
+.ribbon{
+  position:absolute;top:14px;left:14px;z-index:3;
+  font-family:var(--mono);font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;padding:6px 11px;border-radius:100px;
+  background:rgba(10,10,10,.72);backdrop-filter:blur(9px);
+  border:1px solid rgba(244,249,252,.16);
+}
+.ribbon.hot{background:var(--navy);border-color:var(--navy-lift);color:#fff}
+
+.card-body{padding:22px 22px 26px}
+.card-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;margin-bottom:9px}
+.card-name{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.01em}
+.card-price{font-family:var(--mono);font-size:14px;color:var(--ice);white-space:nowrap}
+.card-meta{font-size:13px;color:var(--stone);font-weight:300;line-height:1.6;margin-bottom:18px}
+
+/* stock bar */
+.stock{margin-bottom:18px}
+.stock-bar{height:2px;background:rgba(244,249,252,.12);border-radius:2px;overflow:hidden}
+.stock-fill{height:100%;background:var(--azure);width:0;transition:width 1.4s var(--ease) .3s}
+.stock-txt{
+  display:flex;justify-content:space-between;
+  font-family:var(--mono);font-size:10px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--stone-dim);margin-top:9px;
+}
+
+.card-btn{
+  width:100%;padding:14px;border:1px solid rgba(244,249,252,.24);
+  border-radius:100px;font-size:11px;font-weight:600;
+  letter-spacing:.15em;text-transform:uppercase;
+  transition:background .35s var(--ease),color .35s var(--ease),border-color .35s;
+}
+.card-btn:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.card.unlocked .card-btn{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.card.unlocked .card-btn:hover{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ============================================================
+   DROP BANNER
+   ============================================================ */
+.drop-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:26px;
+  padding:24px 30px;margin-bottom:44px;flex-wrap:wrap;
+  border:1px solid rgba(244,249,252,.12);border-radius:3px;
+  background:linear-gradient(100deg,var(--charcoal),rgba(26,26,26,.35));
+}
+.db-l{display:flex;align-items:center;gap:16px}
+.db-pill{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  padding:7px 14px;border-radius:100px;background:var(--navy);color:#fff;white-space:nowrap;
+  border:1px solid var(--navy-lift);
+}
+.db-txt{font-size:14px;color:var(--stone);font-weight:300}
+.db-txt b{color:var(--paper);font-weight:500}
+.db-cd{font-family:var(--mono);font-size:15px;color:var(--azure);font-variant-numeric:tabular-nums;letter-spacing:.06em}
+
+@media(max-width:640px){
+  .drop-banner{flex-direction:column;align-items:flex-start;gap:16px;padding:20px}
+  .db-l{flex-direction:column;align-items:flex-start;gap:11px}
+}
+
+/* ============================================================
+   QUICK-VIEW MODAL
+   ============================================================ */
+.modal{
+  position:fixed;inset:0;z-index:950;
+  background:rgba(10,10,10,.9);backdrop-filter:blur(14px);
+  display:grid;place-items:center;padding:var(--gut);
+  opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility .45s;
+}
+.modal.open{opacity:1;visibility:visible}
+.modal-box{
+  background:var(--charcoal);border:1px solid rgba(244,249,252,.13);
+  border-radius:4px;max-width:940px;width:100%;
+  max-height:88vh;overflow-y:auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  transform:translateY(22px) scale(.98);
+  transition:transform .55s var(--ease);
+}
+.modal.open .modal-box{transform:none}
+.modal-media{background:var(--charcoal-lift);aspect-ratio:4/5;position:relative;overflow:hidden}
+.modal-media img{width:100%;height:100%;object-fit:cover}
+.modal-media.locked img{filter:blur(26px) saturate(.45) brightness(.72);transform:scale(1.14)}
+.modal-side{padding:clamp(24px,3.4vw,42px);display:flex;flex-direction:column}
+.modal-close{
+  position:absolute;top:14px;right:14px;z-index:5;
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(10,10,10,.6);backdrop-filter:blur(9px);
+  border:1px solid rgba(244,249,252,.18);
+  display:grid;place-items:center;font-size:17px;line-height:1;
+  transition:background .3s;
+}
+.modal-close:hover{background:var(--azure)}
+.spec{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid rgba(244,249,252,.09);font-size:13px}
+.spec dt{color:var(--stone);font-weight:300}
+.spec dd{font-family:var(--mono);font-size:12px;color:var(--paper)}
+.size-row{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.size-chip{
+  min-width:46px;padding:10px 13px;border:1px solid rgba(244,249,252,.22);
+  border-radius:3px;font-family:var(--mono);font-size:12px;
+  transition:background .3s,color .3s,border-color .3s;
+}
+.size-chip:hover:not(:disabled),.size-chip.sel{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.size-chip:disabled{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+
+@media(max-width:760px){
+  .modal-box{grid-template-columns:1fr;max-height:92vh}
+  .modal-media{aspect-ratio:1/1}
+}
+</style>
+
+<!-- ============ DROP 001 ============ -->
+<section class="sec" id="drop">
+  <div class="wrap">
+
+    <div class="tstamp rv"><b>1:00</b><i></i><span class="stamp">The Drop</span></div>
+
+    <div class="sec-head">
+      <h2 class="sec-h2 rv">Drop 001 —<br><em>Ten Past One</em></h2>
+      <p class="sec-note rv rv-d1">
+        Two pieces. Two hundred units. Made with tailors in Nairobi, then gone.
+        The images unblur by themselves the moment the drop opens — no refresh needed.
+      </p>
+    </div>
+
+    <div class="drop-banner rv">
+      <div class="db-l">
+        <span class="db-pill" id="dbPill">Locked</span>
+        <span class="db-txt" id="dbTxt">Drop 001 opens <b>10 January 2026, 1:10 PM EAT</b></span>
+      </div>
+      <span class="db-cd" id="dbCd">--:--:--:--</span>
+    </div>
+
+    <div class="drop-grid" id="dropGrid"><!-- injected by JS --></div>
+  </div>
+</section>
+
+<!-- ============ QUICK VIEW MODAL ============ -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mdName">
+  <div class="modal-box">
+    <div class="modal-media" id="mdMedia">
+      <img id="mdImg" src="" alt="">
+      <button class="modal-close" id="mdClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-side">
+      <span class="stamp" id="mdCat">Drop 001</span>
+      <h3 class="display" id="mdName" style="font-size:34px;margin:12px 0 8px">—</h3>
+      <p style="font-family:var(--mono);font-size:16px;color:var(--ice);margin-bottom:20px" id="mdPrice">—</p>
+      <p style="font-size:14px;color:var(--stone);font-weight:300;line-height:1.75;margin-bottom:24px" id="mdDesc">—</p>
+
+      <dl id="mdSpecs" style="margin-bottom:8px"></dl>
+
+      <p class="stamp" style="margin-top:22px">Select size</p>
+      <div class="size-row" id="mdSizes"></div>
+
+      <button class="btn btn-fill" style="width:100%;margin-top:auto" id="mdCta"><span>Join the waitlist</span></button>
+      <p style="font-size:11px;color:var(--stone-dim);text-align:center;margin-top:13px" id="mdFoot">
+        Waitlist members get a 30-minute head start.
+      </p>
+    </div>
+  </div>
+</div>
+<style>
+/* ============================================================
+   STORY
+   ============================================================ */
+.story{background:var(--charcoal);border-block:1px solid rgba(244,249,252,.08)}
+.story-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(38px,6vw,88px);align-items:center}
+.story-fig{position:relative;aspect-ratio:3/4;background:var(--charcoal-lift);overflow:hidden;border-radius:3px}
+.story-fig img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.06);transition:filter 1s var(--ease),transform 1.2s var(--ease)}
+.story-fig:hover img{filter:grayscale(.15) contrast(1);transform:scale(1.04)}
+.story-cap{
+  position:absolute;bottom:0;left:0;right:0;padding:22px;
+  background:linear-gradient(transparent,rgba(10,10,10,.9));
+}
+.story-body p{color:var(--stone);font-size:clamp(15px,1.7vw,17px);font-weight:300;line-height:1.85;margin-bottom:20px;max-width:56ch}
+.story-body p strong{color:var(--paper);font-weight:500}
+.pull{
+  font-family:var(--display);font-size:clamp(24px,3.2vw,38px);
+  line-height:1.25;color:var(--paper);font-style:italic;
+  padding-left:26px;border-left:2px solid var(--azure);
+  margin:34px 0;
+}
+@media(max-width:900px){.story-grid{grid-template-columns:1fr;gap:38px}}
+
+/* ============================================================
+   CULTURE
+   ============================================================ */
+.cult-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(232px,100%),1fr));gap:1px;background:rgba(244,249,252,.09);border:1px solid rgba(244,249,252,.09)}
+.cult{
+  background:var(--ink);padding:clamp(26px,3.2vw,40px);
+  min-height:250px;display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;overflow:hidden;transition:background .55s var(--ease);
+}
+.cult::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(140deg,rgba(93,181,221,.14),transparent 62%);
+  opacity:0;transition:opacity .55s var(--ease);
+}
+.cult:hover{background:var(--charcoal)}
+.cult:hover::before{opacity:1}
+.cult-n{font-family:var(--mono);font-size:11px;color:var(--stone-dim);letter-spacing:.16em;position:relative}
+.cult-t{font-family:var(--display);font-size:clamp(23px,2.7vw,31px);line-height:1.12;margin-bottom:11px;position:relative}
+.cult-d{font-size:13.5px;color:var(--stone);font-weight:300;line-height:1.65;position:relative}
+
+/* ============================================================
+   LOOKBOOK
+   ============================================================ */
+.lb-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(10px,1.5vw,18px)}
+.lb{
+  position:relative;overflow:hidden;border-radius:3px;
+  background:var(--charcoal-lift);border:1px solid rgba(244,249,252,.07);
+}
+.lb img{width:100%;height:100%;object-fit:cover;transition:transform 1.3s var(--ease),filter 1.3s var(--ease)}
+.lb.locked img{filter:blur(22px) saturate(.4) brightness(.68);transform:scale(1.14)}
+.lb:not(.locked):hover img{transform:scale(1.06)}
+.lb-tag{
+  position:absolute;bottom:0;left:0;right:0;padding:20px;
+  background:linear-gradient(transparent,rgba(10,10,10,.88));
+  display:flex;justify-content:space-between;align-items:flex-end;gap:12px;
+}
+.lb-a{grid-column:span 7;aspect-ratio:4/3}
+.lb-b{grid-column:span 5;aspect-ratio:1/1.2}
+.lb-c{grid-column:span 5;aspect-ratio:1/1}
+.lb-d{grid-column:span 7;aspect-ratio:16/10}
+@media(max-width:800px){
+  .lb-a,.lb-b,.lb-c,.lb-d{grid-column:span 12;aspect-ratio:4/3}
+}
+
+/* ============================================================
+   WAITLIST
+   ============================================================ */
+.wl{position:relative;overflow:hidden;background:var(--charcoal);border-block:1px solid rgba(244,249,252,.08)}
+.wl::before{
+  content:'';position:absolute;top:-42%;left:50%;transform:translateX(-50%);
+  width:min(760px,120vw);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle,rgba(93,181,221,.14),transparent 66%);
+  pointer-events:none;
+}
+.wl-in{position:relative;max-width:1040px;margin-inline:auto;text-align:center}
+.wl-form,.wl-done{max-width:660px;margin-inline:auto}
+.wl h2{font-family:var(--display);font-size:clamp(36px,5.6vw,72px);line-height:.96;letter-spacing:-.025em;margin:20px 0 18px}
+.wl h2 em{font-style:italic;color:var(--ice)}
+.wl-sub{color:var(--stone);font-size:16px;font-weight:300;line-height:1.75;margin-bottom:36px;max-width:46ch;margin-inline:auto}
+
+/* ===== FOUNDING 110 DIAL ===== */
+.dial-wrap{
+  display:grid;grid-template-columns:auto 1fr;
+  gap:clamp(28px,5vw,64px);align-items:center;
+  text-align:left;margin-bottom:clamp(44px,6vw,72px);
+  /* .wl-in is capped at 660px for the form; the dial needs the full column */
+  width:min(1040px,100%);
+  margin-inline:auto;
+}
+.dial{position:relative;width:clamp(210px,26vw,290px);flex-shrink:0}
+.dial svg{width:100%;height:auto;display:block;overflow:visible}
+
+.d-track{
+  fill:none;stroke:rgba(244,249,252,.08);stroke-width:9;
+  stroke-linecap:round;
+  transform:rotate(-90deg);transform-box:view-box;transform-origin:130px 130px;
+  stroke-dasharray:703.7;stroke-dashoffset:176;  /* 270deg arc */
+}
+.d-fill{
+  fill:none;stroke:var(--ice);stroke-width:9;stroke-linecap:round;
+  transform:rotate(-90deg);transform-box:view-box;transform-origin:130px 130px;
+  stroke-dasharray:703.7;stroke-dashoffset:703.7;
+  transition:stroke-dashoffset 1.6s cubic-bezier(.16,1,.3,1);
+}
+.d-bar{stroke:rgba(244,249,252,.14);stroke-width:2.4;stroke-linecap:round;transition:stroke .5s var(--ease)}
+.d-bar.lit{stroke:var(--ice)}
+
+.dial-read{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;pointer-events:none;
+}
+.dial-num{
+  font-family:var(--display);font-weight:500;
+  font-size:clamp(38px,6vw,58px);line-height:1;color:var(--paper);
+  font-variant-numeric:tabular-nums;
+}
+.dial-of{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--stone);margin-top:7px;
+}
+
+.tier-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;padding:7px 14px;border-radius:100px;
+  border:1px solid var(--ice);color:var(--ice);margin-bottom:16px;
+}
+.tier-badge::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--ice);animation:pulse 2.4s ease-in-out infinite;
+}
+.tier-badge.closed{border-color:rgba(244,249,252,.22);color:var(--stone)}
+.tier-badge.closed::before{background:var(--stone);animation:none}
+
+.dial-copy h2{margin:0 0 16px;text-align:left}
+.dial-copy .wl-sub{margin-inline:0;text-align:left;max-width:52ch}
+
+.tier-rows{display:flex;flex-direction:column;gap:1px;background:rgba(244,249,252,.1);border:1px solid rgba(244,249,252,.1);border-radius:3px;overflow:hidden}
+.tier-row{
+  display:grid;grid-template-columns:74px 1fr auto;
+  gap:16px;align-items:center;
+  padding:15px 18px;background:var(--charcoal);
+  transition:background .4s var(--ease);
+}
+.tier-row.active{background:rgba(209,232,244,.08)}
+.tier-n{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--stone)}
+.tier-row.active .tier-n{color:var(--ice)}
+.tier-row b{display:block;font-size:14px;font-weight:500;margin-bottom:3px}
+.tier-row span:not(.tier-n):not(.tier-state){font-size:12.5px;color:var(--stone);font-weight:300;line-height:1.5}
+.tier-state{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;padding:5px 11px;border-radius:100px;
+  border:1px solid rgba(244,249,252,.2);color:var(--stone);white-space:nowrap;
+}
+.tier-row.active .tier-state{border-color:var(--ice);color:var(--ice)}
+.tier-state.gone{border-color:rgba(244,249,252,.14);color:var(--stone-dim);text-decoration:line-through}
+
+@media(max-width:860px){
+  .dial-wrap{grid-template-columns:1fr;justify-items:center;text-align:center;gap:30px}
+  .dial-copy h2,.dial-copy .wl-sub{text-align:center}
+  .dial-copy .wl-sub{margin-inline:auto}
+  .tier-row{grid-template-columns:60px 1fr;text-align:left;row-gap:8px}
+  .tier-state{grid-column:2;justify-self:start}
+}
+
+.wl-form{display:flex;flex-direction:column;gap:11px;text-align:left}
+.wl-row{display:flex;gap:11px}
+.wl-row>*{flex:1}
+.fld{position:relative}
+.fld input,.fld select{
+  width:100%;padding:16px 18px;
+  background:rgba(244,249,252,.045);
+  border:1px solid rgba(244,249,252,.15);
+  border-radius:3px;color:var(--paper);font-size:14px;
+  transition:border-color .35s var(--ease),background .35s;
+}
+.fld select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2710%27 height=%276%27 fill=%27none%27 stroke=%27%238FA3BC%27 stroke-width='1.5'%3E%3Cpath d='M1 1l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 18px center}
+.fld select option{background:var(--charcoal);color:var(--paper)}
+.fld input::placeholder{color:var(--stone-dim)}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--azure);background:rgba(244,249,252,.075)}
+.fld input[aria-invalid="true"]{border-color:#B91C1C}
+.form-err{
+  display:none;margin-top:14px;padding:12px 15px;
+  border:1px solid rgba(248,113,113,.4);
+  background:rgba(185,28,28,.12);border-radius:3px;
+  font-size:13px;color:#FCA5A5;line-height:1.55;
+}
+.form-err.show{display:block}
+.fld-hint{
+  font-size:11.5px;color:var(--stone-dim);line-height:1.55;
+  margin:-2px 0 8px;max-width:56ch;
+}
+.err{
+  font-size:11.5px;color:#F87171;margin-top:6px;display:none;
+  font-family:var(--mono);letter-spacing:.04em;
+}
+.err.show{display:block}
+
+.wl-sizes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.wl-check{
+  padding:11px 17px;border:1px solid rgba(244,249,252,.18);
+  border-radius:100px;font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.09em;transition:background .3s,color .3s,border-color .3s;
+}
+.wl-check.on{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+
+.wl-fine{font-size:11.5px;color:var(--stone-dim);line-height:1.65;text-align:center;margin-top:16px}
+.wl-fine a{text-decoration:underline;text-underline-offset:3px}
+
+/* success state */
+.wl-done{display:none;text-align:center;padding:20px 0}
+.wl-done.show{display:block;animation:heroIn .7s var(--ease)}
+.wl-done-ico{
+  width:62px;height:62px;margin:0 auto 22px;border-radius:50%;
+  border:1px solid var(--azure);display:grid;place-items:center;
+}
+.wl-done-ico svg{width:26px;height:26px;stroke:var(--azure);fill:none;stroke-width:1.6}
+.wl-num{
+  font-family:var(--mono);font-size:13px;color:var(--ice);
+  letter-spacing:.12em;margin-top:12px;
+}
+.perks{
+  list-style:none;max-width:400px;margin:22px auto 0;text-align:left;
+  border:1px solid rgba(209,232,244,.26);border-radius:3px;
+  background:rgba(209,232,244,.05);padding:16px 18px;
+}
+.perks li{
+  position:relative;padding-left:22px;font-size:13px;
+  color:var(--stone);font-weight:300;line-height:1.6;margin-bottom:9px;
+}
+.perks li:last-child{margin-bottom:0}
+.perks li::before{
+  content:'';position:absolute;left:4px;top:8px;
+  width:5px;height:5px;border-radius:50%;background:var(--ice);
+}
+.perks a{color:var(--ice);text-decoration:underline;text-underline-offset:2px}
+
+
+@media(max-width:560px){.wl-row{flex-direction:column}}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faq{max-width:820px;margin-inline:auto}
+.q{border-bottom:1px solid rgba(244,249,252,.1)}
+.q summary{
+  padding:24px 0;cursor:pointer;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  font-size:16.5px;font-weight:400;transition:color .3s;
+}
+.q summary::-webkit-details-marker{display:none}
+.q summary:hover{color:var(--ice)}
+.q summary::after{content:'+';font-family:var(--mono);font-size:19px;color:var(--stone);transition:transform .4s var(--ease);flex-shrink:0}
+.q[open] summary::after{transform:rotate(45deg)}
+.q p{padding:0 0 24px;color:var(--stone);font-size:14.5px;font-weight:300;line-height:1.8;max-width:64ch}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.ft{background:var(--ink);padding:clamp(60px,7vw,92px) 0 34px;border-top:1px solid rgba(244,249,252,.08)}
+.ft-top{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:40px;margin-bottom:62px}
+.ft-brand svg{width:44px;height:44px;margin-bottom:18px}
+.ft-tag{font-family:var(--display);font-size:26px;font-style:italic;margin-bottom:14px}
+.ft-blurb{font-size:13.5px;color:var(--stone);font-weight:300;line-height:1.7;max-width:34ch}
+.ft-col h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone-dim);margin-bottom:18px;font-weight:400}
+.ft-col a{display:block;font-size:13.5px;color:var(--stone);padding:6px 0;transition:color .3s,transform .3s var(--ease)}
+.ft-col a:hover{color:var(--paper);transform:translateX(3px)}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;gap:20px;padding-top:28px;border-top:1px solid rgba(244,249,252,.08);flex-wrap:wrap}
+@media(max-width:800px){.ft-top{grid-template-columns:1fr 1fr;gap:34px}.ft-brand{grid-column:1/-1}}
+</style>
+
+<!-- ============ STORY ============ -->
+<section class="sec story" id="story">
+  <div class="wrap">
+    <div class="tstamp rv"><b>1:05</b><i></i><span class="stamp">The Story</span></div>
+    <div class="story-grid">
+      <figure class="story-fig rv">
+        <img src="" data-slot="story" alt="Nairobi, late afternoon" loading="lazy">
+        <figcaption class="story-cap"><span class="stamp">Nairobi · 13:10 EAT</span></figcaption>
+      </figure>
+      <div class="story-body rv rv-d1">
+        <h2 class="sec-h2" style="margin-bottom:26px">Why <em>1:10?</em></h2>
+        <p>
+          A clock is the only thing that treats everyone the same. It does not care
+          where you were born, what you drive, or who your father knows.
+          <strong>Everybody gets twenty-four hours.</strong> What separates people is
+          what they do inside them.
+        </p>
+        <p>
+          One o'clock is when you decide. Ten past one is when you have already moved
+          — while the rest of the room is still deciding. That ten-minute gap is the
+          whole brand.
+        </p>
+        <blockquote class="pull">Ten minutes past the hour is already late for anyone still waiting.</blockquote>
+        <p>
+          We cut and sew in Nairobi, with Nairobi tailors, for people who are building
+          something here. Two hundred pieces at a time, four times a year.
+          <strong>When they're gone, they're gone.</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CULTURE ============ -->
+<section class="sec" id="culture">
+  <div class="wrap">
+    <div class="tstamp rv"><b>1:07</b><i></i><span class="stamp">The Culture</span></div>
+    <div class="sec-head">
+      <h2 class="sec-h2 rv">Who it's<br><em>cut for</em></h2>
+      <p class="sec-note rv rv-d1">
+        110 is not one scene. It's everyone in this city working against the clock —
+        on a pitch, in a studio, behind a lens, between lectures.
+      </p>
+    </div>
+    <div class="cult-grid rv rv-d1">
+      <div class="cult"><span class="cult-n">01</span><div><h3 class="cult-t">On the pitch</h3><p class="cult-d">Sunday league, estate cages, five-a-side under floodlights. Football is the language.</p></div></div>
+      <div class="cult"><span class="cult-n">02</span><div><h3 class="cult-t">On the court</h3><p class="cult-d">Basketball runs at Nyayo and every cracked slab with a rim on it.</p></div></div>
+      <div class="cult"><span class="cult-n">03</span><div><h3 class="cult-t">In the studio</h3><p class="cult-d">Producers, painters, designers. The people making the thing before it's a scene.</p></div></div>
+      <div class="cult"><span class="cult-n">04</span><div><h3 class="cult-t">Behind the lens</h3><p class="cult-d">Photographers documenting the city faster than the city changes.</p></div></div>
+      <div class="cult"><span class="cult-n">05</span><div><h3 class="cult-t">On campus</h3><p class="cult-d">Students running businesses between lectures. The hustle starts early here.</p></div></div>
+      <div class="cult"><span class="cult-n">06</span><div><h3 class="cult-t">On the move</h3><p class="cult-d">Skaters, runners, dancers. Anyone who measures a day in distance covered.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOOKBOOK ============ -->
+<section class="sec" id="lookbook" style="background:var(--charcoal);border-block:1px solid rgba(244,249,252,.08)">
+  <div class="wrap">
+    <div class="tstamp rv"><b>1:09</b><i></i><span class="stamp">The Lookbook</span></div>
+    <div class="sec-head">
+      <h2 class="sec-h2 rv">Drop 001<br><em>Lookbook</em></h2>
+      <p class="sec-note rv rv-d1">Shot across Nairobi. Unblurs with the drop, 10 January at 1:10 PM.</p>
+    </div>
+    <div class="lb-grid rv rv-d1" id="lbGrid">
+      <figure class="lb lb-a locked"><img src="" data-slot="lb1" alt="Drop 001 lookbook" loading="lazy"><figcaption class="lb-tag"><span class="stamp">Fig. 01 — Eastlands</span><span class="stamp">Locked</span></figcaption></figure>
+      <figure class="lb lb-b locked"><img src="" data-slot="lb2" alt="Drop 001 lookbook" loading="lazy"><figcaption class="lb-tag"><span class="stamp">Fig. 02 — Rooftop</span><span class="stamp">Locked</span></figcaption></figure>
+      <figure class="lb lb-c locked"><img src="" data-slot="lb3" alt="Drop 001 lookbook" loading="lazy"><figcaption class="lb-tag"><span class="stamp">Fig. 03 — The Cage</span><span class="stamp">Locked</span></figcaption></figure>
+      <figure class="lb lb-d locked"><img src="" data-slot="lb4" alt="Drop 001 lookbook" loading="lazy"><figcaption class="lb-tag"><span class="stamp">Fig. 04 — CBD, 13:10</span><span class="stamp">Locked</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WAITLIST ============ -->
+<section class="sec wl" id="waitlist">
+  <div class="wrap wl-in">
+    <!-- ===== FOUNDING 110 PROGRESS DIAL ===== -->
+    <div class="dial-wrap rv" id="dialWrap">
+      <div class="dial">
+        <svg viewBox="0 0 260 260" role="img" aria-labelledby="dialTitle">
+          <title id="dialTitle">Founding 110 places claimed</title>
+          <defs>
+            <radialGradient id="dBody" cx="42%" cy="34%" r="72%">
+              <stop offset="0" stop-color="#31445C"/>
+              <stop offset="55%" stop-color="#152438"/>
+              <stop offset="100%" stop-color="#070F1C"/>
+            </radialGradient>
+            <radialGradient id="dInner" cx="45%" cy="36%" r="66%">
+              <stop offset="0" stop-color="#24354C"/>
+              <stop offset="100%" stop-color="#0B1626"/>
+            </radialGradient>
+            <linearGradient id="dRim" x1="0" y1="0" x2="0.4" y2="1">
+              <stop offset="0" stop-color="#3E5878"/>
+              <stop offset="45%" stop-color="#122036"/>
+              <stop offset="100%" stop-color="#2A3D57"/>
+            </linearGradient>
+            <filter id="dGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="7" result="bl"/>
+              <feMerge><feMergeNode in="bl"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- outer torus -->
+          <circle cx="130" cy="130" r="116" fill="url(#dRim)"/>
+          <circle cx="130" cy="130" r="103" fill="url(#dBody)"/>
+          <circle cx="130" cy="130" r="103" fill="none" stroke="#000" stroke-opacity=".55" stroke-width="1"/>
+
+          <!-- machined tick ring -->
+          <g id="dialTicks"></g>
+
+          <!-- recessed centre -->
+          <circle cx="130" cy="130" r="60" fill="url(#dInner)"/>
+          <circle cx="130" cy="130" r="60" fill="none" stroke="#000" stroke-opacity=".6" stroke-width="1.5"/>
+          <circle cx="130" cy="130" r="27" fill="#122036" stroke="#3E5878" stroke-width="1"/>
+          <circle cx="130" cy="130" r="20" fill="#070F1C"/>
+
+          <!-- clock mark in the hub -->
+          <g opacity=".85">
+            <circle cx="130" cy="130" r="12" fill="none" stroke="var(--ice)" stroke-width="1.6"/>
+            <line x1="130" y1="130" x2="130" y2="123" stroke="var(--ice)" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="130" y1="130" x2="136" y2="132" stroke="var(--ice)" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- progress arc track + fill -->
+          <circle class="d-track" cx="130" cy="130" r="112"/>
+          <circle class="d-fill" id="dFill" cx="130" cy="130" r="112" filter="url(#dGlow)"/>
+
+          <!-- lit segment bars -->
+          <g id="dialBars"></g>
+        </svg>
+
+        <div class="dial-read">
+          <span class="dial-num" id="dialNum">0</span>
+          <span class="dial-of">of 110 claimed</span>
+        </div>
+      </div>
+
+      <div class="dial-copy">
+        <span class="tier-badge" id="tierBadge">Founding 110 — open</span>
+        <h2>Be one of the <em>first 110</em></h2>
+        <p class="wl-sub" style="margin:0 0 22px">
+          The first 110 people on this list are Founding Members. 15% off your first
+          four drops, first access before every release, something on your birthday,
+          and your number on the inside label. After 110, the list stays open — you
+          just join the community to unlock your perks.
+        </p>
+        <div class="tier-rows">
+          <div class="tier-row" id="tierRow1">
+            <span class="tier-n">001–110</span>
+            <div>
+              <b>Founding Member</b>
+              <span>15% off your first four drops · early access · numbered label · birthday offer</span>
+            </div>
+            <span class="tier-state" id="tierState1">Open</span>
+          </div>
+          <div class="tier-row" id="tierRow2">
+            <span class="tier-n">111+</span>
+            <div>
+              <b>Community Member</b>
+              <span>Follow us on IG &amp; TikTok to unlock drop perks</span>
+            </div>
+            <span class="tier-state">Open</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <form class="wl-form" id="wlForm" novalidate>
+      <div class="wl-row">
+        <div class="fld">
+          <label class="sr" for="wlName">Full name</label>
+          <input type="text" id="wlName" name="name" placeholder="Full name" autocomplete="name" required>
+          <p class="err" id="errName">Enter your name.</p>
+        </div>
+        <div class="fld">
+          <label class="sr" for="wlEmail">Email</label>
+          <input type="email" id="wlEmail" name="email" placeholder="Email address" autocomplete="email" required>
+          <p class="err" id="errEmail">Enter a valid email address.</p>
+        </div>
+      </div>
+
+      <div class="wl-row">
+        <div class="fld">
+          <label class="sr" for="wlPhone">Phone (M-Pesa)</label>
+          <input type="tel" id="wlPhone" name="phone" placeholder="M-Pesa number — 07XX XXX XXX" autocomplete="tel" required>
+          <p class="err" id="errPhone">Enter a valid Kenyan number, e.g. 0712 345 678.</p>
+        </div>
+        <div class="fld">
+          <label class="sr" for="wlCity">City</label>
+          <select id="wlCity" name="city">
+            <option value="Nairobi">Nairobi</option>
+            <option value="Mombasa">Mombasa</option>
+            <option value="Kisumu">Kisumu</option>
+            <option value="Nakuru">Nakuru</option>
+            <option value="Eldoret">Eldoret</option>
+            <option value="Other KE">Elsewhere in Kenya</option>
+            <option value="Outside KE">Outside Kenya</option>
+          </select>
+        </div>
+      </div>
+
+      <p class="stamp" style="margin-top:12px">Your birthday</p>
+      <p class="fld-hint">We send Founding Members something on their day. Day and month only — we don't ask for your year.</p>
+      <div class="wl-row">
+        <div class="fld">
+          <label class="sr" for="wlBday">Birth day</label>
+          <select id="wlBday" name="birthDay">
+            <option value="">Day</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label class="sr" for="wlBmon">Birth month</label>
+          <select id="wlBmon" name="birthMonth">
+            <option value="">Month</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+      </div>
+      <p class="err" id="errBday">Pick both a day and a month.</p>
+
+      <p class="stamp" style="margin-top:12px">Reserve my size</p>
+      <div class="wl-sizes" id="wlSizes" role="group" aria-label="Size preference">
+        <button type="button" class="wl-check" data-size="S">S</button>
+        <button type="button" class="wl-check" data-size="M">M</button>
+        <button type="button" class="wl-check" data-size="L">L</button>
+        <button type="button" class="wl-check" data-size="XL">XL</button>
+        <button type="button" class="wl-check" data-size="XXL">XXL</button>
+        <button type="button" class="wl-check" data-size="Cap">Cap (one size)</button>
+      </div>
+      <p class="err" id="errSize">Pick at least one size.</p>
+
+      <p class="form-err" id="formErr" role="alert"></p>
+      <button type="submit" class="btn btn-fill" style="width:100%;margin-top:14px" id="wlSubmit">
+        <span>Reserve my place</span>
+      </button>
+      <p class="wl-fine">
+        No spam, one email when the drop opens. We store your details only to notify you
+        about Drop 001 — see our <a href="#privacy">privacy notice</a>.
+      </p>
+    </form>
+
+    <div class="wl-done" id="wlDone" role="status">
+      <div class="wl-done-ico"><svg viewBox="0 0 24 24"><path d="M4 12.5l5.5 5.5L20 7"/></svg></div>
+      <h3 class="display" id="wlDoneH" style="font-size:32px;margin-bottom:11px">You're on the list.</h3>
+      <p id="wlDoneP" style="color:var(--stone);font-size:14.5px;font-weight:300;max-width:42ch;margin-inline:auto">
+        Check your email for confirmation.
+      </p>
+      <p class="wl-num" id="wlPos">Founding Member #048</p>
+      <ul class="perks" id="wlPerks"></ul>
+      <p style="font-size:12px;color:var(--stone-dim);margin-top:20px">
+        We'll message you 24 hours before the drop, then again the moment it opens.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="tstamp rv"><b>1:10</b><i></i><span class="stamp">Questions</span></div>
+    <h2 class="sec-h2 rv" style="text-align:center;margin-bottom:52px">Before you<br><em>ask</em></h2>
+    <div class="faq rv rv-d1">
+      <details class="q"><summary>When exactly does Drop 001 open?</summary><p>10 January 2026 at 1:10 PM East Africa Time. The product images on this page unblur automatically at that moment — you don't need to refresh. Waitlist members get access from 12:40 PM.</p></details>
+      <details class="q"><summary>How many pieces are there?</summary><p>200 in total: 110 tees and 90 fitted caps. There is no restock of Drop 001. The next drop lands in April 2026.</p></details>
+      <details class="q"><summary>Can I pay with M-Pesa?</summary><p>Yes. M-Pesa is the default at checkout, alongside Visa and Mastercard. You'll get an STK push to the number on your order.</p></details>
+      <details class="q"><summary>Where do you ship?</summary><p>Nairobi delivery in 1–2 days. Everywhere else in Kenya, 2–4 days by courier. Pickup from our January pop-up is free — pick that option at checkout.</p></details>
+      <details class="q"><summary>What's the sizing like?</summary><p>The tee is a boxy, slightly oversized fit at 240 GSM. Caps are structured six-panel, one size, adjustable. Full measurements go live with the drop.</p></details>
+      <details class="q"><summary>Does joining the waitlist mean I've bought something?</summary><p>No. The waitlist reserves your early access window and holds your size for one hour after the drop opens. No payment is taken until you check out.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="ft" id="contact">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <svg viewBox="0 0 80 80" aria-hidden="true">
+          <circle cx="40" cy="40" r="35" fill="none" stroke="currentColor" stroke-width="4"/>
+          <line x1="40" y1="40" x2="40" y2="19" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <line x1="40" y1="40" x2="57" y2="47" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+        <p class="ft-tag">Rock the Clock.</p>
+        <p class="ft-blurb">Streetwear designed and made in Nairobi, Kenya. Limited drops, four times a year.</p>
+      </div>
+      <div class="ft-col">
+        <h4>Shop</h4>
+        <a href="#drop">Drop 001</a><a href="#lookbook">Lookbook</a>
+        <a href="#waitlist">Waitlist</a><a href="#drop">Size guide</a>
+      </div>
+      <div class="ft-col">
+        <h4>Brand</h4>
+        <a href="#story">Our story</a><a href="#culture">Culture</a>
+        <a href="#faq">FAQ</a><a href="mailto:hello@110apparel.co.ke">Contact</a>
+      </div>
+      <div class="ft-col">
+        <h4>Follow</h4>
+        <a href="https://instagram.com/110apparel" target="_blank" rel="noopener noreferrer">Instagram</a>
+        <a href="https://tiktok.com/@110apparel" target="_blank" rel="noopener noreferrer">TikTok</a>
+        <a href="https://x.com/110apparel" target="_blank" rel="noopener noreferrer">X</a>
+        <a href="mailto:hello@110apparel.co.ke">hello@110apparel.co.ke</a>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <span class="stamp">© 2026 110 Apparel · Nairobi, Kenya</span>
+      <span class="stamp" id="ftClock">--:--:-- EAT</span>
+      <span class="stamp"><a href="#privacy">Privacy</a> · <a href="#terms">Terms</a> · <a href="#returns">Returns</a></span>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   CONFIG — edit these two blocks and the site is yours
+   ============================================================ */
+const CONFIG = {
+  // Drop opens 10 Jan 2026, 13:10 East Africa Time (UTC+3)
+  DROP_ISO: '2026-01-10T13:10:00+03:00',
+  // Waitlist members get in 30 minutes early
+  EARLY_MIN: 30,
+  // Netlify Function that talks to Mailchimp. Works as-is once deployed to
+  // Netlify with the env vars set (see SETUP.md section 3).
+  // Leave as '' to run in demo mode with no backend.
+  ENDPOINT: '/.netlify/functions/subscribe',
+  // How many people have already joined. Update this as signups come in
+  // (or have your backend return it and set CONFIG.JOINED from the response).
+  JOINED: 47,
+  // Founding-member tier size — the first 110 get the four-drop perks
+  FOUNDING_CAP: 110
+};
+
+const PRODUCTS = [
+  {
+    id:'tee-001',
+    name:'The 1:10 Tee',
+    cat:'Drop 001 · Tee',
+    price:'KES 2,000',
+    meta:'240 GSM heavyweight cotton. Boxy fit, dropped shoulder, screen-printed clock mark.',
+    desc:'Cut heavy and boxy, the way a tee should sit. 240 GSM combed cotton, pre-shrunk, with a screen-printed clock mark on the back and a woven 110 label at the hem. Made with tailors in Nairobi.',
+    img:'assets/tee-01.jpg',
+    total:110,
+    claimed:0,
+    sizes:['S','M','L','XL','XXL'],
+    soldOut:[],
+    specs:[['Weight','240 GSM'],['Fabric','100% combed cotton'],['Fit','Boxy / oversized'],['Print','Screen print'],['Made in','Nairobi, Kenya']]
+  },
+  {
+    id:'cap-001',
+    name:'The 1:10 Fitted',
+    cat:'Drop 001 · Headwear',
+    price:'KES 1,500',
+    meta:'Structured six-panel. Raised embroidery, flat brim, one size adjustable.',
+    desc:'A structured six-panel with a hard front and flat brim. The clock mark is raised embroidery, not print, so it holds its shape. One size with an adjustable back closure.',
+    img:'assets/cap-01.jpg',
+    total:90,
+    claimed:0,
+    sizes:['One size'],
+    soldOut:[],
+    specs:[['Panels','Six, structured'],['Brim','Flat'],['Mark','3D embroidery'],['Closure','Adjustable'],['Made in','Nairobi, Kenya']]
+  }
+];
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $  = (s,r) => (r||document).querySelector(s);
+const $$ = (s,r) => Array.from((r||document).querySelectorAll(s));
+const pad = n => String(n).padStart(2,'0');
+const DROP_TS  = new Date(CONFIG.DROP_ISO).getTime();
+const EARLY_TS = DROP_TS - CONFIG.EARLY_MIN*60000;
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Placeholder image — a dark studio-ish gradient so blurred cards
+   read as real product photography before real assets land.
+   Swap `img:` paths above for your shoot; nothing else changes. */
+function placeholder(seed,label){
+  const tones=[['#1E3048','#0A1220'],['#243A56','#0D1828'],['#1A2B42','#08111E'],['#22344E','#0B1524']];
+  const t=tones[seed%tones.length];
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="0.6" y2="1">
+        <stop offset="0" stop-color="${t[0]}"/><stop offset="1" stop-color="${t[1]}"/>
+      </linearGradient>
+      <radialGradient id="s" cx="0.42" cy="0.34" r="0.62">
+        <stop offset="0" stop-color="#5B7A9C" stop-opacity="0.55"/>
+        <stop offset="1" stop-color="#000" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="800" height="1000" fill="url(#g)"/>
+    <rect width="800" height="1000" fill="url(#s)"/>
+    <ellipse cx="400" cy="480" rx="210" ry="290" fill="#000" opacity="0.2"/>
+    <circle cx="400" cy="430" r="82" fill="none" stroke="#8FA3BC" stroke-opacity="0.3" stroke-width="4"/>
+    <line x1="400" y1="430" x2="400" y2="379" stroke="#8FA3BC" stroke-opacity="0.34" stroke-width="6" stroke-linecap="round"/>
+    <line x1="400" y1="430" x2="441" y2="447" stroke="#8FA3BC" stroke-opacity="0.34" stroke-width="6" stroke-linecap="round"/>
+    <text x="400" y="640" font-family="monospace" font-size="20" letter-spacing="7"
+      fill="#8FA3BC" fill-opacity="0.4" text-anchor="middle">${label}</text>
+  </svg>`;
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+
+/* Try the real asset; fall back to the placeholder if it 404s.
+   This is what lets you drop photos into /assets later with zero code changes. */
+function setImg(el,src,seed,label){
+  const ph = placeholder(seed,label);
+  if(!src){ el.src = ph; return; }
+  const probe = new Image();
+  probe.onload  = () => { el.src = src; };
+  probe.onerror = () => { el.src = ph; };
+  probe.src = src;
+  el.src = ph; // show placeholder immediately
+}
+
+/* ============================================================
+   STATE — is the drop open?
+   ============================================================ */
+function isOpen(){ return Date.now() >= DROP_TS; }
+function isEarly(){ return Date.now() >= EARLY_TS; }
+
+/* ============================================================
+   PRELOADER
+   ============================================================ */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const p=$('#preload');
+    if(p) p.classList.add('done');
+  }, reduceMotion?0:1500);
+});
+
+/* ============================================================
+   LIVE ANALOG CLOCK
+   ============================================================ */
+(function buildTicks(){
+  const g=$('#ticks');
+  if(!g) return;
+  let out='';
+  for(let i=0;i<60;i++){
+    const major = i%5===0;
+    // 1 o'clock = tick 5, 2 o'clock = tick 10 → bracket the 1:10 zone
+    const hot = (i===5||i===10);
+    const len = major?7:3.4;
+    const r1=79, r2=79-len;
+    const a=(i*6-90)*Math.PI/180;
+    const x1=100+r1*Math.cos(a), y1=100+r1*Math.sin(a);
+    const x2=100+r2*Math.cos(a), y2=100+r2*Math.sin(a);
+    const cls = hot?'cf-tick-hot':(major?'cf-tick-major':'cf-tick');
+    out+=`<line class="${cls}" x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}"/>`;
+  }
+  g.innerHTML=out;
+})();
+
+/* The hero clock is a pure CSS loop (see .cf-sec / .cf-hour / .cf-min
+   keyframes) — it rests at 1:10 and rotates back to 1:10 every 30s.
+   No JS drives it. This function only keeps the footer's real EAT clock,
+   and pauses the loop when the hero is off-screen to save battery. */
+let lastFtSec=-1;
+function tickClock(){
+  const now=new Date();
+  const sec=now.getSeconds();
+  if(sec===lastFtSec) return;
+  lastFtSec=sec;
+  const ft=$('#ftClock');
+  if(ft) ft.textContent=`${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(sec)} EAT`;
+}
+
+/* Pause the hero clock animation when it scrolls out of view. */
+function initHeroClock(){
+  const face=$('.clock-face');
+  if(!face||!('IntersectionObserver' in window)) return;
+  new IntersectionObserver(entries=>{
+    entries.forEach(e=>face.classList.toggle('paused',!e.isIntersecting));
+  },{threshold:0}).observe(face);
+}
+
+/* ============================================================
+   COUNTDOWN + AUTO-UNLOCK ENGINE
+   This is the piece that makes the blur lift by itself.
+   ============================================================ */
+let hasUnlocked=false;
+
+function unlockEverything(){
+  if(hasUnlocked) return;
+  hasUnlocked=true;
+
+  $$('.card.locked').forEach((c,i)=>{
+    setTimeout(()=>{ c.classList.remove('locked'); c.classList.add('unlocked'); },
+      reduceMotion?0:i*220);
+  });
+  $$('.lb.locked').forEach((f,i)=>{
+    setTimeout(()=>{
+      f.classList.remove('locked');
+      const tag=f.querySelector('.lb-tag .stamp:last-child');
+      if(tag) tag.textContent='Live';
+    }, reduceMotion?0:300+i*180);
+  });
+  const mm=$('#mdMedia'); if(mm) mm.classList.remove('locked');
+
+  // banner
+  const pill=$('#dbPill'), txt=$('#dbTxt'), cd=$('#dbCd');
+  if(pill){ pill.textContent='Live now'; }
+  if(txt){ txt.innerHTML='Drop 001 is <b>open</b>. 200 pieces, no restock.'; }
+  if(cd){ cd.textContent='Selling now'; }
+
+  // hero eyebrow
+  const eb=$('.hero-eyebrow .stamp');
+  if(eb) eb.textContent='Drop 001 · Live now · 200 pieces';
+
+  // buttons become shop actions
+  $$('.card-btn').forEach(b=>{ b.textContent='Add to cart'; });
+  const mdCta=$('#mdCta');
+  if(mdCta) mdCta.innerHTML='<span>Add to cart</span>';
+  const mdFoot=$('#mdFoot');
+  if(mdFoot) mdFoot.textContent='Ships from Nairobi in 1–2 days.';
+
+  document.title='110 Apparel — Drop 001 is live';
+}
+
+function tickCountdown(){
+  const diff = DROP_TS - Date.now();
+
+  if(diff<=0){
+    ['cdD','cdH','cdM','cdS'].forEach(id=>{ const e=$('#'+id); if(e) e.textContent='00'; });
+    unlockEverything();
+    return;
+  }
+
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor(diff%86400000/3600000);
+  const m=Math.floor(diff%3600000/60000);
+  const s=Math.floor(diff%60000/1000);
+
+  const set=(id,v)=>{ const e=$('#'+id); if(e) e.textContent=pad(v); };
+  set('cdD',d); set('cdH',h); set('cdM',m); set('cdS',s);
+
+  const compact = `${pad(d)}d ${pad(h)}h ${pad(m)}m ${pad(s)}s`;
+  const db=$('#dbCd'); if(db) db.textContent=compact;
+  $$('.lock-cd').forEach(e=>{ e.textContent=compact; });
+
+  // early-access window opens
+  if(isEarly()){
+    const pill=$('#dbPill');
+    if(pill && pill.textContent!=='Early access'){
+      pill.textContent='Early access';
+      const txt=$('#dbTxt');
+      if(txt) txt.innerHTML='Waitlist early access is <b>open now</b>. Public drop at 1:10 PM.';
+    }
+  }
+}
+
+/* Single interval drives clock + countdown. 250ms keeps the second hand
+   landing within a quarter-second of true without burning a rAF frame
+   budget on a static page. Pauses when the tab is hidden. */
+let timer=null;
+function beat(){ tickClock(); tickCountdown(); }
+function startLoop(){
+  if(timer) clearInterval(timer);
+  beat();
+  timer=setInterval(beat,250);
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){ if(timer){clearInterval(timer); timer=null;} }
+  else { lastFtSec=-1; startLoop(); }   // resync on return
+});
+
+/* ============================================================
+   RENDER PRODUCTS
+   ============================================================ */
+function renderProducts(){
+  const grid=$('#dropGrid');
+  if(!grid) return;
+  const open=isOpen();
+
+  grid.innerHTML = PRODUCTS.map((p,i)=>{
+    const left = p.total - p.claimed;
+    const pct  = Math.round(p.claimed/p.total*100);
+    return `
+    <article class="card ${open?'unlocked':'locked'} rv ${i?'rv-d1':''}" data-id="${p.id}">
+      <div class="card-media">
+        <span class="ribbon ${i===0?'hot':''}">${i===0?'Hero piece':'Limited'}</span>
+        <img data-src="${p.img}" data-seed="${i}" data-label="${p.name.toUpperCase()}" alt="${p.name}, Drop 001">
+        <div class="lock-veil">
+          <div class="lock-ico"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+          <span class="lock-t">Unlocks 10.01.26 · 1:10 PM</span>
+          <span class="lock-cd">--d --h --m --s</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-row">
+          <h3 class="card-name">${p.name}</h3>
+          <span class="card-price">${p.price}</span>
+        </div>
+        <p class="card-meta">${p.meta}</p>
+        <div class="stock">
+          <div class="stock-bar"><div class="stock-fill" data-pct="${pct}"></div></div>
+          <div class="stock-txt"><span>${p.total} made</span><span>${left} available</span></div>
+        </div>
+        <button class="card-btn" data-open="${p.id}">${open?'Add to cart':'Join the waitlist'}</button>
+      </div>
+    </article>`;
+  }).join('');
+
+  // resolve images (real asset → placeholder fallback)
+  $$('#dropGrid img').forEach(img=>{
+    setImg(img, img.dataset.src, +img.dataset.seed, img.dataset.label);
+  });
+
+  // wire buttons
+  $$('#dropGrid [data-open]').forEach(b=>{
+    b.addEventListener('click',()=>openModal(b.dataset.open));
+  });
+}
+
+/* lookbook + story images */
+function renderStatic(){
+  const labels={story:'NAIROBI 13:10',lb1:'FIG. 01',lb2:'FIG. 02',lb3:'FIG. 03',lb4:'FIG. 04'};
+  $$('[data-slot]').forEach((img,i)=>{
+    const k=img.dataset.slot;
+    setImg(img,`assets/${k}.jpg`,i+2,labels[k]||'110');
+  });
+}
+
+/* ============================================================
+   FOUNDING 110 DIAL
+   270deg arc, 44 segment bars, count-up readout.
+   ============================================================ */
+const ARC_DEG=270;
+const R=112;
+const CIRC=2*Math.PI*R;                 // 703.7
+const ARC_LEN=CIRC*(ARC_DEG/360);       // visible track length
+
+function buildDial(){
+  const ticks=$('#dialTicks'), bars=$('#dialBars');
+  if(!ticks) return;
+
+  // machined ticks on the recessed face
+  let t='';
+  for(let i=0;i<72;i++){
+    const a=(i*5-90)*Math.PI/180;
+    const major=i%6===0;
+    const r1=92, r2=92-(major?9:5);
+    t+=`<line x1="${(130+r1*Math.cos(a)).toFixed(2)}" y1="${(130+r1*Math.sin(a)).toFixed(2)}"
+        x2="${(130+r2*Math.cos(a)).toFixed(2)}" y2="${(130+r2*Math.sin(a)).toFixed(2)}"
+        stroke="rgba(244,249,252,${major?.22:.1})" stroke-width="${major?1.4:.8}"/>`;
+  }
+  ticks.innerHTML=t;
+
+  // segment bars along the 270deg arc, starting at -90deg (12 o'clock)
+  let b='';
+  for(let i=0;i<44;i++){
+    const a=(-90+(i/43)*ARC_DEG)*Math.PI/180;
+    const r1=99, r2=90;
+    b+=`<line class="d-bar" data-i="${i}"
+        x1="${(130+r1*Math.cos(a)).toFixed(2)}" y1="${(130+r1*Math.sin(a)).toFixed(2)}"
+        x2="${(130+r2*Math.cos(a)).toFixed(2)}" y2="${(130+r2*Math.sin(a)).toFixed(2)}"/>`;
+  }
+  bars.innerHTML=b;
+
+  const track=$('.d-track');
+  if(track){
+    track.style.strokeDasharray=CIRC;
+    track.style.strokeDashoffset=CIRC-ARC_LEN;
+  }
+  const fill=$('#dFill');
+  if(fill){
+    fill.style.strokeDasharray=CIRC;
+    fill.style.strokeDashoffset=CIRC;   // start empty
+  }
+}
+
+/* Animate the dial to the current joined count. */
+function setDial(joined,animate){
+  const cap=CONFIG.FOUNDING_CAP;
+  const claimed=Math.min(joined,cap);
+  const pct=claimed/cap;
+
+  const fill=$('#dFill');
+  if(fill) fill.style.strokeDashoffset = CIRC - ARC_LEN*pct;
+
+  $$('#dialBars .d-bar').forEach((bar,i)=>{
+    const on = i/43 <= pct + 0.001;
+    setTimeout(()=>bar.classList.toggle('lit',on), animate&&!reduceMotion ? i*22 : 0);
+  });
+
+  // count-up readout
+  const num=$('#dialNum');
+  if(num){
+    if(!animate||reduceMotion){ num.textContent=claimed; }
+    else{
+      const dur=1400, t0=performance.now(), from=0;
+      const step=now=>{
+        const k=Math.min((now-t0)/dur,1);
+        const eased=1-Math.pow(1-k,3);
+        num.textContent=Math.round(from+(claimed-from)*eased);
+        if(k<1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+  }
+
+  // tier states
+  const full = joined>=cap;
+  const badge=$('#tierBadge');
+  if(badge){
+    badge.textContent = full
+      ? `Founding 110 — full`
+      : `Founding 110 — ${cap-claimed} places left`;
+    badge.classList.toggle('closed',full);
+  }
+  const row1=$('#tierRow1'), row2=$('#tierRow2'), st1=$('#tierState1');
+  if(row1) row1.classList.toggle('active',!full);
+  if(row2) row2.classList.toggle('active',full);
+  if(st1){
+    st1.textContent = full?'Full':'Open';
+    st1.classList.toggle('gone',full);
+  }
+
+  const of=$('.dial-of');
+  if(of) of.textContent = full ? 'founding places filled' : 'of 110 claimed';
+}
+
+/* fire the animation only when the dial scrolls into view */
+function initDial(){
+  buildDial();
+  setDial(CONFIG.JOINED,false);
+  const wrap=$('#dialWrap');
+  if(!wrap) return;
+  const io=new IntersectionObserver((en,obs)=>{
+    en.forEach(e=>{
+      if(!e.isIntersecting) return;
+      setDial(CONFIG.JOINED,true);
+      obs.unobserve(e.target);
+    });
+  },{threshold:.35});
+  io.observe(wrap);
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+let lastFocus=null;
+
+function openModal(id){
+  const p=PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  lastFocus=document.activeElement;
+  const open=isOpen();
+
+  $('#mdCat').textContent=p.cat;
+  $('#mdName').textContent=p.name;
+  $('#mdPrice').textContent=p.price;
+  $('#mdDesc').textContent=p.desc;
+  $('#mdSpecs').innerHTML=p.specs.map(s=>
+    `<div class="spec"><dt>${s[0]}</dt><dd>${s[1]}</dd></div>`).join('');
+  $('#mdSizes').innerHTML=p.sizes.map(s=>
+    `<button type="button" class="size-chip" ${p.soldOut.includes(s)?'disabled':''}>${s}</button>`).join('');
+  $$('#mdSizes .size-chip').forEach(c=>{
+    c.addEventListener('click',()=>{
+      $$('#mdSizes .size-chip').forEach(x=>x.classList.remove('sel'));
+      c.classList.add('sel');
+    });
+  });
+
+  const media=$('#mdMedia');
+  media.classList.toggle('locked',!open);
+  const img=$('#mdImg');
+  img.alt=p.name;
+  setImg(img,p.img,PRODUCTS.indexOf(p),p.name.toUpperCase());
+
+  $('#mdCta').innerHTML=`<span>${open?'Add to cart':'Join the waitlist'}</span>`;
+
+  $('#modal').classList.add('open');
+  document.body.classList.add('is-locked');
+  setTimeout(()=>$('#mdClose').focus(),80);
+}
+
+function closeModal(){
+  $('#modal').classList.remove('open');
+  document.body.classList.remove('is-locked');
+  if(lastFocus) lastFocus.focus();
+}
+
+/* ============================================================
+   WAITLIST FORM
+   ============================================================ */
+function initForm(){
+  const form=$('#wlForm');
+  if(!form) return;
+  const chosen=new Set();
+
+  // populate 1–31; invalid combinations are caught on submit
+  const dSel=$('#wlBday');
+  if(dSel){
+    for(let i=1;i<=31;i++){
+      const o=document.createElement('option');
+      o.value=i; o.textContent=i;
+      dSel.appendChild(o);
+    }
+  }
+
+  // days per month, ignoring leap years — 29 Feb is allowed
+  const DPM=[31,29,31,30,31,30,31,31,30,31,30,31];
+  function bdayValid(){
+    const d=+$('#wlBday').value, m=+$('#wlBmon').value;
+    if(!d||!m) return false;
+    return d<=DPM[m-1];
+  }
+
+  $$('#wlSizes .wl-check').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const s=b.dataset.size;
+      if(chosen.has(s)){ chosen.delete(s); b.classList.remove('on'); b.setAttribute('aria-pressed','false'); }
+      else { chosen.add(s); b.classList.add('on'); b.setAttribute('aria-pressed','true'); }
+      $('#errSize').classList.remove('show');
+    });
+    b.setAttribute('aria-pressed','false');
+  });
+
+  const showErr=(id,on)=>{ const e=$('#'+id); if(e) e.classList.toggle('show',on); };
+  const markInvalid=(el,on)=>{ el.setAttribute('aria-invalid',on?'true':'false'); };
+
+  // Kenyan mobile: 07XXXXXXXX, 01XXXXXXXX, +2547XXXXXXXX, +2541XXXXXXXX
+  const phoneOk = v => /^(?:\+?254|0)?[17]\d{8}$/.test(v.replace(/[\s-]/g,''));
+  const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+
+  form.addEventListener('submit', async e=>{
+    e.preventDefault();
+
+    const name=$('#wlName'), email=$('#wlEmail'), phone=$('#wlPhone');
+    let bad=false;
+
+    const nOk=name.value.trim().length>=2;
+    showErr('errName',!nOk); markInvalid(name,!nOk); if(!nOk) bad=true;
+
+    const eOk=emailOk(email.value);
+    showErr('errEmail',!eOk); markInvalid(email,!eOk); if(!eOk) bad=true;
+
+    const pOk=phoneOk(phone.value);
+    showErr('errPhone',!pOk); markInvalid(phone,!pOk); if(!pOk) bad=true;
+
+    const bOk=bdayValid();
+    showErr('errBday',!bOk); if(!bOk) bad=true;
+
+    if(chosen.size===0){ showErr('errSize',true); bad=true; }
+
+    if(bad){
+      const first=form.querySelector('[aria-invalid="true"]');
+      if(first) first.focus();
+      return;
+    }
+
+    const btn=$('#wlSubmit');
+    const fe0=$('#formErr');
+    if(fe0) fe0.classList.remove('show');
+    btn.innerHTML='<span>Reserving…</span>';
+    btn.disabled=true;
+
+    const bDay=+$('#wlBday').value, bMon=+$('#wlBmon').value;
+
+    const payload={
+      name:name.value.trim(),
+      email:email.value.trim(),
+      phone:phone.value.replace(/[\s-]/g,''),
+      city:$('#wlCity').value,
+      sizes:Array.from(chosen).join(', '),
+      // Mailchimp expects birthdays as MM/DD
+      birthday:`${pad(bMon)}/${pad(bDay)}`,
+      drop:'Drop 001',
+      submitted:new Date().toISOString()
+    };
+
+    let serverPos=null, serverCount=null, alreadyMember=false;
+
+    try{
+      if(CONFIG.ENDPOINT){
+        const res=await fetch(CONFIG.ENDPOINT,{
+          method:'POST',
+          headers:{'Content-Type':'application/json',Accept:'application/json'},
+          body:JSON.stringify(payload)
+        });
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok && !data.ok) throw new Error(data.error||'Request failed');
+        // the function returns the authoritative position and total
+        if(typeof data.position==='number') serverPos=data.position;
+        if(typeof data.count==='number') serverCount=data.count;
+        alreadyMember=!!data.already;
+      }else{
+        // demo mode — no backend wired yet
+        await new Promise(r=>setTimeout(r,750));
+        console.log('[110] Waitlist signup (demo mode, not sent):',payload);
+      }
+
+      // Past this point the signup HAS been captured. Any error below is a
+      // rendering problem, not a submission failure — never tell the user to
+      // "try again" here or they'll submit twice.
+      try{
+      // Server position wins; fall back to local increment in demo mode.
+      const pos = serverPos !== null ? serverPos : CONFIG.JOINED+1;
+      CONFIG.JOINED = serverCount !== null ? serverCount : pos;
+      const founding = pos<=CONFIG.FOUNDING_CAP;
+
+      const posEl=$('#wlPos');
+      if(posEl) posEl.textContent = founding
+        ? `Founding Member #${String(pos).padStart(3,'0')}`
+        : `Position #${pos}`;
+
+      const hEl=$('#wlDoneH'), pEl=$('#wlDoneP'), perks=$('#wlPerks');
+      if(alreadyMember){
+        if(hEl) hEl.textContent="You're already on the list.";
+        if(pEl) pEl.textContent=`This email is signed up. We've refreshed your details — nothing else to do.`;
+      }else if(founding){
+        if(hEl) hEl.textContent="You're a Founding Member.";
+        if(pEl) pEl.textContent=`You're one of the first 110. That number is yours permanently — it goes on the inside label of your Drop 001 piece.`;
+        if(perks) perks.innerHTML=`
+          <li>15% off your first four drops — a full year of releases</li>
+          <li>Early access 30 minutes before each release</li>
+          <li>Your member number printed on the inside label</li>
+          <li>A birthday offer, sent on your day</li>
+          <li>First invite to pop-ups and collab previews</li>`;
+      }else{
+        if(hEl) hEl.textContent="You're on the list.";
+        if(pEl) pEl.textContent=`The Founding 110 is full, but your perks are one step away — follow us and we'll unlock them on your account.`;
+        if(perks) perks.innerHTML=`
+          <li>Follow <a href="https://instagram.com/110apparel" target="_blank" rel="noopener noreferrer">@110apparel</a> on Instagram</li>
+          <li>Follow <a href="https://tiktok.com/@110apparel" target="_blank" rel="noopener noreferrer">@110apparel</a> on TikTok</li>
+          <li>Then you get 10% off Drop 001 and early-access alerts</li>
+          <li>A birthday offer, sent on your day</li>`;
+      }
+
+      setDial(CONFIG.JOINED,true);
+      }catch(renderErr){
+        console.error('[110] Signup saved but UI update failed:',renderErr);
+      }
+
+      form.style.display='none';
+      $('#wlDone').classList.add('show');
+      $('#wlDone').scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'center'});
+    }catch(err){
+      btn.innerHTML='<span>Try again</span>';
+      btn.disabled=false;
+      const fe=$('#formErr');
+      if(fe){
+        fe.textContent = err && err.message && err.message!=='Failed to fetch'
+          ? err.message
+          : "That didn't send. Check your connection and try again.";
+        fe.classList.add('show');
+      }
+    }
+  });
+}
+
+/* ============================================================
+   SCROLL REVEALS + NAV
+   ============================================================ */
+function initScroll(){
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if(!en.isIntersecting) return;
+      en.target.classList.add('in');
+      // animate stock bars once visible
+      $$('.stock-fill',en.target).forEach(f=>{ f.style.width=f.dataset.pct+'%'; });
+      io.unobserve(en.target);
+    });
+  },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+
+  $$('.rv').forEach(el=>io.observe(el));
+
+  const nav=$('#nav');
+  let ticking=false;
+  window.addEventListener('scroll',()=>{
+    if(ticking) return;
+    ticking=true;
+    requestAnimationFrame(()=>{
+      nav.classList.toggle('stuck',window.scrollY>40);
+      ticking=false;
+    });
+  },{passive:true});
+}
+
+function initNav(){
+  const burger=$('#burger');
+  if(burger){
+    burger.addEventListener('click',()=>{
+      const open=document.body.classList.toggle('menu-open');
+      burger.setAttribute('aria-expanded',open?'true':'false');
+      burger.setAttribute('aria-label',open?'Close menu':'Open menu');
+      document.body.classList.toggle('is-locked',open);
+    });
+  }
+  $$('#drawer a').forEach(a=>{
+    a.addEventListener('click',()=>{
+      document.body.classList.remove('menu-open','is-locked');
+      if(burger) burger.setAttribute('aria-expanded','false');
+    });
+  });
+
+  $('#mdClose').addEventListener('click',closeModal);
+  $('#modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
+  $('#mdCta').addEventListener('click',()=>{
+    closeModal();
+    if(!isOpen()){
+      $('#waitlist').scrollIntoView({behavior:reduceMotion?'auto':'smooth'});
+      setTimeout(()=>$('#wlName').focus(),reduceMotion?0:600);
+    }
+  });
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      if($('#modal').classList.contains('open')) closeModal();
+      if(document.body.classList.contains('menu-open')){
+        document.body.classList.remove('menu-open','is-locked');
+        if(burger) burger.setAttribute('aria-expanded','false');
+      }
+    }
+  });
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+function init(){
+  renderProducts();
+  renderStatic();
+  initHeroClock();
+  initDial();
+  initForm();
+  initScroll();
+  initNav();
+  startLoop();
+}
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+else init();
+
+})();
+</script>
+</body>
+</html>
